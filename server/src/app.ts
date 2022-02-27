@@ -2,6 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import indexRouter from './routes/index.routes'
 
 const app = express();
 
@@ -17,3 +18,5 @@ app.get('/', (_req, res) => {
     message: 'Hello, World!',
   });
 });
+
+app.use(indexRouter);
