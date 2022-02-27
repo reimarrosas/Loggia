@@ -41,12 +41,27 @@ export const updateLogbook = async (
   try {
     await db.none(
       `
-        UPDATE users
+        UPDATE logbooks
         SET logbook_name = $1
         WHERE logbook_id = $2
           AND user_id = $3
     `,
       [logbookName, logbookId, userId]
+    );
+  } catch (err) {
+    throw new HttpInternal();
+  }
+};
+
+export const deleteLogbook = async (logbookId: number, userId: number) => {
+  try {
+    await db.none(
+      `
+        DELETE FROM logbooks
+        WHERE logbook_id = $1
+          AND user_id = $2
+    `,
+      [logbookId, userId]
     );
   } catch (err) {
     throw new HttpInternal();

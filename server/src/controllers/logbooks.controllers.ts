@@ -3,6 +3,7 @@ import asyncHandler from 'express-async-handler';
 
 import {
   createLogbook,
+  deleteLogbook,
   getAllLogbooks,
   updateLogbook,
 } from '../database/services/logbooks.services';
@@ -51,6 +52,23 @@ export const updateLogbooks: RequestHandler = asyncHandler(
 
     res.status(201).send({
       message: `Logbook ${logbookId} successfully updated!`,
+    });
+  }
+);
+
+export const deleteLogbooks: RequestHandler = asyncHandler(
+  async (req, res, _next) => {
+    const { userId } = req.credentials;
+
+    const { logbookId } = req.params;
+    if (!logbookId) {
+      throw new HttpBadRequest('Logbook ID Required!');
+    }
+
+    await deleteLogbook(parseInt(logbookId), userId);
+
+    res.send({
+      message: `Logbook ${logbookId} successfully deleted!`,
     });
   }
 );
