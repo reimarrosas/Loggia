@@ -8,6 +8,7 @@ import {
   createUser,
   findUserByEmail,
   UserCredentials,
+  verifyUser,
 } from '../database/services/auth.services';
 import { HttpBadRequest } from '../utils/HttpErrors/HttpBadRequest';
 import { HttpNotFound } from '../utils/HttpErrors/HttpNotFound';
@@ -20,9 +21,19 @@ import { HttpInternal } from '../utils/HttpErrors/HttpInternal';
 const generateJwt = (payload: Partial<UserCredentials>): string =>
   jwt.sign(payload, process.env['TOKEN_SECRET'] ?? 'Tungsten Rat');
 
+const verifyJwt = (token: string): Partial<UserCredentials> => {
+  try {
+    return <UserCredentials>(
+      jwt.verify(token, process.env['TOKEN_SECRET'] ?? 'Tungsten Rat')
+    );
+  } catch (err) {
+    throw new HttpBadRequest('Token Invalid!');
+  }
+};
+
 const sendVerificationEmail = async (email: string) => {
   try {
-    console.log(process.env['TRANSPORT_EMAIL'])
+    console.log(process.env['TRANSPORT_EMAIL']);
     const transporter = createTransport({
       host: 'smtp-mail.outlook.com',
       port: 587,
@@ -59,6 +70,10 @@ export const login: RequestHandler = asyncHandler(async (req, res, _next) => {
   const user = await findUserByEmail(email);
   if (user === null) {
     throw new HttpNotFound('User');
+  }
+
+  if (!user.is_verified) {
+    throw new HttpUnauthorized();
   }
 
   const isPasswordCorrect = await bcrypt.compare(password, user.user_password);
@@ -107,3 +122,21 @@ export const register: RequestHandler = asyncHandler(
     });
   }
 );
+
+export const emailVerify: RequestHandler = async (req, res, _next) => {
+  const { token } = req.params;
+
+  if (isNullish(token)) {
+    throw new HttpBadRequest('Token does not exist!');
+  }
+
+  const { user_email } = verifyJwt(token ?? 'UNREACHABLE');
+  const updatedRows = await verifyUser(user_email ?? 'UNREACHABLE');
+  if (updatedRows !== 1) {
+    throw new HttpNotFound('User');
+  }
+
+  res.send({
+    message: 'User successfully verified!',
+  });
+};

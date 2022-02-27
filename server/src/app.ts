@@ -11,7 +11,6 @@ if (process.env['NODE_ENV'] !== 'production') {
     dotenv.config({
       path: path.resolve(process.cwd(), '.env.development.local'),
     });
-    console.log(path.resolve(process.cwd(), '.env.development.local'));
   });
 }
 

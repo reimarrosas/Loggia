@@ -6,6 +6,7 @@ export interface UserCredentials {
   user_name: string;
   user_email: string;
   user_password: string;
+  is_verified: boolean;
 }
 
 export const findUserByEmail = async (
@@ -14,7 +15,7 @@ export const findUserByEmail = async (
   try {
     return await db.oneOrNone(
       `
-        SELECT user_id, user_name, user_email, user_password
+        SELECT *
         FROM users
         WHERE user_email = $1
       `,
@@ -36,6 +37,23 @@ export const createUser = async (user: Partial<UserCredentials>) => {
       `,
       user
     );
+  } catch (err) {
+    throw new HttpInternal();
+  }
+};
+
+export const verifyUser = async (email: string): Promise<number> => {
+  try {
+    const { rowCount } = await db.result(
+      `
+        UPDATE users
+        SET is_verified = TRUE
+        WHERE user_email = $1
+    `,
+      [email]
+    );
+
+    return rowCount;
   } catch (err) {
     throw new HttpInternal();
   }
