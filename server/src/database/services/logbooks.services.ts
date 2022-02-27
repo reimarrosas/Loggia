@@ -38,7 +38,7 @@ export const updateLogbook = async (
   userId: number
 ) => {
   try {
-    await db.none(
+    const { rowCount } = await db.result(
       `
         UPDATE logbooks
         SET logbook_name = $1
@@ -47,6 +47,8 @@ export const updateLogbook = async (
     `,
       [logbookName, logbookId, userId]
     );
+
+    return rowCount;
   } catch (err) {
     throw new HttpInternal();
   }
@@ -54,7 +56,7 @@ export const updateLogbook = async (
 
 export const deleteLogbook = async (logbookId: number, userId: number) => {
   try {
-    await db.none(
+    const { rowCount } = await db.result(
       `
         DELETE FROM logbooks
         WHERE logbook_id = $1
@@ -62,6 +64,8 @@ export const deleteLogbook = async (logbookId: number, userId: number) => {
     `,
       [logbookId, userId]
     );
+
+    return rowCount;
   } catch (err) {
     throw new HttpInternal();
   }

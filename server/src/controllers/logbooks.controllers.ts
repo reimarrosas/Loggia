@@ -48,7 +48,14 @@ export const updateLogbooks: RequestHandler = asyncHandler(
       throw new HttpBadRequest('Logbook ID and Logbook Name Required!');
     }
 
-    await updateLogbook(logbookName, parseInt(logbookId), userId);
+    const rowCount = await updateLogbook(
+      logbookName,
+      parseInt(logbookId),
+      userId
+    );
+    if (rowCount !== 1) {
+      throw new HttpBadRequest('Logbook ID Invalid!');
+    }
 
     res.status(201).send({
       message: `Logbook ${logbookId} successfully updated!`,
@@ -65,7 +72,10 @@ export const deleteLogbooks: RequestHandler = asyncHandler(
       throw new HttpBadRequest('Logbook ID Required!');
     }
 
-    await deleteLogbook(parseInt(logbookId), userId);
+    const rowCount = await deleteLogbook(parseInt(logbookId), userId);
+    if (rowCount !== 1) {
+      throw new HttpBadRequest('Logbook ID Invalid!');
+    }
 
     res.send({
       message: `Logbook ${logbookId} successfully deleted!`,
