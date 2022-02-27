@@ -16,19 +16,4 @@ CREATE TABLE IF NOT EXISTS users (
   is_verified BOOLEAN DEFAULT FALSE
 );
 
-INSERT INTO
-  users (
-    user_name,
-    user_email,
-    user_password,
-    is_verified
-  )
-VALUES
-  (
-    'Reimar Rosas',
-    'reimarrosas0208@gmail.com',
-    '$2a$10$AyaPIa7c4r5XL2eBz9UxFOSPBqRuOWlxCrUx5sN1efpRwIeDOTBdy',
-    TRUE
-  );
-
 COMMIT;
