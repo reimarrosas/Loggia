@@ -19,4 +19,4 @@ app.get('/', (_req, res) => {
   });
 });
 
-app.use(indexRouter);
+app.use('/api', indexRouter);
