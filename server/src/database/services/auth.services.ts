@@ -2,10 +2,10 @@ import { HttpInternal } from '../../utils/HttpErrors/HttpInternal';
 import { db } from '../setup';
 
 export interface UserCredentials {
-  id?: number;
-  name?: string;
-  email?: string;
-  password?: string;
+  id: number;
+  name: string;
+  email: string;
+  password: string;
 }
 
 export const findUserByEmail = async (
