@@ -3,6 +3,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import indexRouter from './routes/index.routes';
+import { errorHandler, notFoundHandler } from './middlewares/error.middlewares';
 
 const app = express();
 
@@ -21,3 +22,5 @@ app.get('/', (_req, res) => {
 });
 
 app.use(indexRouter);
+app.use(notFoundHandler);
+app.use(errorHandler);

@@ -9,6 +9,6 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   err = err.statusCode ? err : new HttpInternal();
 
   res.status(err.statusCode).send({
-    message: err.toString(),
+    message: err.toString()
   });
 };
