@@ -86,7 +86,7 @@ export const login: RequestHandler = asyncHandler(async (req, res, _next) => {
     user_name: user.user_name,
     user_email: user.user_email,
   };
-  res.cookie('loggia-sess', generateJwt(payload), cookieSetting(keepLoggedIn));
+  res.cookie('loggia_sess', generateJwt(payload), cookieSetting(keepLoggedIn));
   res.send({
     id: payload.user_id,
     name: payload.user_name,
@@ -142,3 +142,18 @@ export const emailVerify: RequestHandler = asyncHandler(
     });
   }
 );
+
+export const loginStatus: RequestHandler = (req, res, _next) => {
+  const { loggia_sess } = req.signedCookies;
+
+  if (isNullish(loggia_sess)) {
+    throw new HttpUnauthorized();
+  }
+
+  const { user_id, user_name, user_email } = verifyJwt(loggia_sess);
+  res.send({
+    id: user_id,
+    name: user_name,
+    email: user_email,
+  });
+};
