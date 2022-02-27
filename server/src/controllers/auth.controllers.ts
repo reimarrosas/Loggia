@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
-import asyncHandler from 'express-async-handler';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import asyncHandler from 'express-async-handler';
 
 import {
   findUserByEmail,
@@ -28,20 +28,20 @@ export const login: RequestHandler = asyncHandler(async (req, res, _next) => {
     throw new HttpNotFound('User');
   }
 
-  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+  const isPasswordCorrect = await bcrypt.compare(password, user.user_password);
   if (!isPasswordCorrect) {
     throw new HttpUnauthorized();
   }
 
   const payload = {
-    id: user.id,
-    name: user.name,
-    email: user.email,
+    user_id: user.user_id,
+    user_name: user.user_name,
+    user_email: user.user_email,
   };
-  res.cookie('loggia-sess', generateJwt(payload), cookieSetting);
+  res.cookie('loggia-sess', generateJwt(payload), cookieSetting(keepLoggedIn));
   res.send({
-    id: payload.id,
-    name: payload.name,
-    email: payload.email,
+    id: payload.user_id,
+    name: payload.user_name,
+    email: payload.user_email,
   });
 });
