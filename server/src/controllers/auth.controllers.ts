@@ -123,20 +123,22 @@ export const register: RequestHandler = asyncHandler(
   }
 );
 
-export const emailVerify: RequestHandler = async (req, res, _next) => {
-  const { token } = req.params;
+export const emailVerify: RequestHandler = asyncHandler(
+  async (req, res, _next) => {
+    const { token } = req.params;
 
-  if (isNullish(token)) {
-    throw new HttpBadRequest('Token does not exist!');
+    if (isNullish(token)) {
+      throw new HttpBadRequest('Token does not exist!');
+    }
+
+    const { user_email } = verifyJwt(token ?? 'UNREACHABLE');
+    const updatedRows = await verifyUser(user_email ?? 'UNREACHABLE');
+    if (updatedRows !== 1) {
+      throw new HttpNotFound('User');
+    }
+
+    res.send({
+      message: 'User successfully verified!',
+    });
   }
-
-  const { user_email } = verifyJwt(token ?? 'UNREACHABLE');
-  const updatedRows = await verifyUser(user_email ?? 'UNREACHABLE');
-  if (updatedRows !== 1) {
-    throw new HttpNotFound('User');
-  }
-
-  res.send({
-    message: 'User successfully verified!',
-  });
-};
+);
