@@ -32,3 +32,23 @@ export const createLogbook = async (logbookName: string, userId: number) => {
     throw new HttpInternal();
   }
 };
+
+export const updateLogbook = async (
+  logbookName: string,
+  logbookId: number,
+  userId: number
+) => {
+  try {
+    await db.none(
+      `
+        UPDATE users
+        SET logbook_name = $1
+        WHERE logbook_id = $2
+          AND user_id = $3
+    `,
+      [logbookName, logbookId, userId]
+    );
+  } catch (err) {
+    throw new HttpInternal();
+  }
+};

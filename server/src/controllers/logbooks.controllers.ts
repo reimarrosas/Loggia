@@ -4,9 +4,9 @@ import asyncHandler from 'express-async-handler';
 import {
   createLogbook,
   getAllLogbooks,
+  updateLogbook,
 } from '../database/services/logbooks.services';
 import { HttpBadRequest } from '../utils/HttpErrors/HttpBadRequest';
-import { isNullish } from '../utils/isNullish';
 
 export const getLogbooks: RequestHandler = asyncHandler(
   async (req, res, _next) => {
@@ -24,7 +24,7 @@ export const createLogbooks: RequestHandler = asyncHandler(
 
     const { logbookName } = req.body;
 
-    if (logbookName) {
+    if (!logbookName) {
       throw new HttpBadRequest('Logbook Name Required!');
     }
 
@@ -32,6 +32,25 @@ export const createLogbooks: RequestHandler = asyncHandler(
 
     res.send({
       message: 'Logbook successfully created!',
+    });
+  }
+);
+
+export const updateLogbooks: RequestHandler = asyncHandler(
+  async (req, res, _next) => {
+    const { userId } = req.credentials;
+
+    const { logbookId } = req.params;
+    const { logbookName } = req.body;
+
+    if (!logbookId || !logbookName) {
+      throw new HttpBadRequest('Logbook ID and Logbook Name Required!');
+    }
+
+    await updateLogbook(logbookName, parseInt(logbookId), userId);
+
+    res.status(201).send({
+      message: `Logbook ${logbookId} successfully updated!`,
     });
   }
 );

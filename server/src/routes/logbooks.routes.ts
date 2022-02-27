@@ -3,6 +3,7 @@ import express from 'express';
 import {
   createLogbooks,
   getLogbooks,
+  updateLogbooks,
 } from '../controllers/logbooks.controllers';
 import { parseCreds } from '../middlewares/credentialParser.middlewares';
 
@@ -13,5 +14,7 @@ router.use(parseCreds);
 router.get('/', getLogbooks);
 
 router.post('/', createLogbooks);
+
+router.put('/:logbookId', updateLogbooks);
 
 export default router;
