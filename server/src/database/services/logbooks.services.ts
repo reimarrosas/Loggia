@@ -21,10 +21,9 @@ export const createLogbook = async (logbookName: string, userId: number) => {
     await db.none(
       `
         INSERT INTO logbooks
-          (logbook_name)
+          (logbook_name, user_id)
         VALUES
-          ($1)
-        WHERE user_id = $2
+          ($1, $2)
     `,
       [logbookName, userId]
     );
