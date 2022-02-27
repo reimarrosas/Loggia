@@ -157,3 +157,10 @@ export const loginStatus: RequestHandler = (req, res, _next) => {
     email: user_email,
   });
 };
+
+export const logout: RequestHandler = (_req, res, _next) => {
+  res.clearCookie('loggia_sess');
+  res.send({
+    message: 'User logged out successfully!',
+  });
+};
