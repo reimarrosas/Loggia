@@ -21,7 +21,7 @@ import { HttpInternal } from '../utils/HttpErrors/HttpInternal';
 const generateJwt = (payload: Partial<UserCredentials>): string =>
   jwt.sign(payload, process.env['TOKEN_SECRET'] ?? 'Tungsten Rat');
 
-const verifyJwt = (token: string): Partial<UserCredentials> => {
+export const verifyJwt = (token: string): Partial<UserCredentials> => {
   try {
     return <UserCredentials>(
       jwt.verify(token, process.env['TOKEN_SECRET'] ?? 'Tungsten Rat')
