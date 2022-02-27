@@ -13,8 +13,28 @@ export const findUserByEmail = async (
 ): Promise<UserCredentials | null> => {
   try {
     return await db.oneOrNone(
-      `SELECT user_id, user_name, user_email, user_password FROM users WHERE user_email = $1`,
+      `
+        SELECT user_id, user_name, user_email, user_password
+        FROM users
+        WHERE user_email = $1
+      `,
       [email]
+    );
+  } catch (err) {
+    throw new HttpInternal();
+  }
+};
+
+export const createUser = async (user: Partial<UserCredentials>) => {
+  try {
+    await db.none(
+      `
+        INSERT INTO users
+          (user_name, user_email, user_password)
+        VALUES
+          ($<user_name>, $<user_email>, $<user_password>)
+      `,
+      user
     );
   } catch (err) {
     throw new HttpInternal();
