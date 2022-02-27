@@ -4,6 +4,16 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import indexRouter from './routes/index.routes';
 import { errorHandler, notFoundHandler } from './middlewares/error.middlewares';
+import path from 'path/posix';
+
+if (process.env['NODE_ENV'] !== 'production') {
+  import('dotenv').then(dotenv => {
+    dotenv.config({
+      path: path.resolve(process.cwd(), '.env.development.local'),
+    });
+    console.log(path.resolve(process.cwd(), '.env.development.local'));
+  });
+}
 
 const app = express();
 
