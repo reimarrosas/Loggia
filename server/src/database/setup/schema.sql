@@ -55,6 +55,15 @@ CREATE TABLE IF NOT EXISTS events (
   FOREIGN KEY (log_id) REFERENCES logs (log_id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS share_links (
+  share_id TEXT GENERATED ALWAYS AS uuid_generate_v4() PRIMARY KEY,
+  start_date TIMESTAMP,
+  end_date TIMESTAMP,
+  logbook_id BIGINT NOT NULL,
+
+  FOREIGN KEY (logbook_id) REFERENCES logbooks (logbook_id) ON DELETE CASCADE
+);
+
 CREATE UNIQUE INDEX idx_users_email ON users (user_email);
 
 COMMIT;
