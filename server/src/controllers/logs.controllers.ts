@@ -1,7 +1,8 @@
 import { RequestHandler } from 'express';
 import asyncHandler from 'express-async-handler';
 
-import { getAllLogs, getSingleLog } from '../database/services/logs.services';
+import { getAllLogs } from '../database/services/logs.services';
+import { getAllEntries } from '../database/services/entries.services';
 import { HttpBadRequest } from '../utils/HttpErrors/HttpBadRequest';
 
 export const getLogs: RequestHandler = asyncHandler(async (req, res, _next) => {
@@ -18,19 +19,22 @@ export const getLogs: RequestHandler = asyncHandler(async (req, res, _next) => {
   });
 });
 
-export const getLog: RequestHandler = asyncHandler(async (req, res, _next) => {
-  const { userId } = req.credentials;
-  const { logId } = req.params;
-  const { logbookId } = req.query;
+export const getLogEntries: RequestHandler = asyncHandler(
+  async (req, res, _next) => {
+    const { userId } = req.credentials;
+    const { logId } = req.params;
+    const { logbookId } = req.query;
 
-  const _logId = typeof logId === 'string' && parseInt(logId);
-  const _logbookId = typeof logbookId === 'string' && parseInt(logbookId);
+    const _logId = typeof logId === 'string' && parseInt(logId);
+    const _logbookId = typeof logbookId === 'string' && parseInt(logbookId);
 
-  if (!_logId || !_logbookId) {
-    throw new HttpBadRequest('Log ID and Logbook ID must be numeric!');
+    if (!_logId || !_logbookId) {
+      throw new HttpBadRequest('Log ID and Logbook ID must be numeric!');
+    }
+
+    res.send({
+      logId: _logId,
+      entries: await getAllEntries(_logId, _logbookId, userId),
+    });
   }
-
-  res.send({
-    log: await getSingleLog(_logId, _logbookId, userId),
-  });
-});
+);
