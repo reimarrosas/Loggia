@@ -70,3 +70,16 @@ export const deleteLogbook = async (logbookId: number, userId: number) => {
     throw new HttpInternal();
   }
 };
+
+export const isLogbookAccessible = async (logbookId: number, userId: number) => {
+  try {
+    return await db.oneOrNone(
+      `
+        SELECT * FROM logbooks WHERE logbook_id = $1 AND user_id = $2
+      `,
+      [logbookId, userId]
+    );
+  } catch (err) {
+    throw new HttpInternal();
+  }
+};

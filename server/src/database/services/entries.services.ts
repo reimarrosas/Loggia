@@ -1,3 +1,4 @@
+import pgPromise from 'pg-promise';
 import { HttpInternal } from '../../utils/HttpErrors/HttpInternal';
 import { db } from '../setup';
 
@@ -45,4 +46,25 @@ export const getAllEntries = async (
   } catch (err) {
     throw new HttpInternal();
   }
+};
+
+export const createEntries = async (
+  entries: Array<Partial<Entry>>,
+  logId: number,
+  t: pgPromise.ITask<{}>
+) => {
+  return await t.batch(
+    entries.map(e => {
+      t.none(
+        `
+          INSERT INTO entries (entry_time, entry_text, entry_type, log_id)
+          VALUES ($<entry_time>, $<entry_text>, $<entry_type>, $<logId>)
+        `,
+        {
+          ...e,
+          logId,
+        }
+      );
+    })
+  );
 };
