@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import asyncHandler from 'express-async-handler';
 
-import { createNewLog, getAllLogs } from '../database/services/logs.services';
+import { createNewLog, deleteLogAndEntries, getAllLogs, isLogAccessible } from '../database/services/logs.services';
 import { getAllEntries } from '../database/services/entries.services';
 import { HttpBadRequest } from '../utils/HttpErrors/HttpBadRequest';
 import { HttpUnauthorized } from '../utils/HttpErrors/HttpUnauthorized';
@@ -87,6 +87,31 @@ export const createLog = asyncHandler(async (req, res, _next) => {
   await createNewLog(logbookId, logDate, logTitle, entries);
 
   res.send({
-    message: 'Log creation successful!',
+    message: 'Log successfully created',
+  });
+});
+
+export const deleteLog = asyncHandler(async (req, res, _next) => {
+  const { userId } = req.credentials;
+
+  const logId = validateEntityId(req.params['logId']);
+  const logbookId = validateEntityId(req.query['logbookId']);
+
+  if (!logId || !logbookId) {
+    throw new HttpBadRequest('Log ID and Logbook ID must be numeric!');
+  }
+
+  if (!(await isLogAccessible(logId, logbookId, userId))) {
+    throw new HttpUnauthorized();
+  }
+
+  const rowCount = await deleteLogAndEntries(logId);
+
+  if (rowCount !== 1) {
+    throw new HttpBadRequest('Log ID Invalid!');
+  }
+
+  res.send({
+    message: `Log ${logId} successfully deleted!`,
   });
 });

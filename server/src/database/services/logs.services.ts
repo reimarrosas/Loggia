@@ -41,3 +41,41 @@ export const createNewLog = async (
     throw new HttpInternal();
   }
 };
+
+export const deleteLogAndEntries = async (logId: number) => {
+  try {
+    const { rowCount } = await db.result(
+      `
+        DELETE FROM logs
+        WHERE log_id = $1
+      `,
+      [logId]
+    );
+
+    return rowCount;
+  } catch (err) {
+    throw new HttpInternal();
+  }
+};
+
+export const isLogAccessible = async (
+  logId: number,
+  logbookdId: number,
+  userId: number
+) => {
+  try {
+    return await db.oneOrNone(
+      `
+        SELECT log_id
+        FROM logs as l JOIN logbooks as lb
+          ON l.logbook_id = lb.logbook_id
+        WHERE
+          l.log_id = $1 AND lb.logbook_id = $2
+          AND lb.user_id = $3
+      `,
+      [logId, logbookdId, userId]
+    );
+  } catch (err) {
+    throw new HttpInternal();
+  }
+};
