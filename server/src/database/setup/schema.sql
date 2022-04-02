@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS entries (
 );
 
 CREATE TABLE IF NOT EXISTS share_links (
-  share_id TEXT GENERATED ALWAYS AS uuid_generate_v4() PRIMARY KEY,
+  share_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   start_date TIMESTAMP,
   end_date TIMESTAMP,
   logbook_id BIGINT NOT NULL,

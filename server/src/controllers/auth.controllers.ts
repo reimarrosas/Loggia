@@ -33,7 +33,6 @@ export const verifyJwt = (token: string): Partial<UserCredentials> => {
 
 const sendVerificationEmail = async (email: string) => {
   try {
-    console.log(process.env['TRANSPORT_EMAIL']);
     const transporter = createTransport({
       host: 'smtp-mail.outlook.com',
       port: 587,
@@ -42,10 +41,7 @@ const sendVerificationEmail = async (email: string) => {
         user: process.env['TRANSPORT_EMAIL'],
         pass: process.env['TRANSPORT_PASS'],
       },
-      logger: true,
-      debug: true,
     });
-    console.log('Before Sending!');
     await transporter.sendMail({
       from: `Loggia Web App <${process.env['TRANSPORT_EMAIL']}>`,
       to: email,
@@ -54,7 +50,6 @@ const sendVerificationEmail = async (email: string) => {
         process.env['URL_ROOT']
       }/api/auth/verify/${generateJwt({ user_email: email })}'>link</a>!`,
     });
-    console.log('After Sending!');
   } catch (err) {
     throw new HttpInternal();
   }
